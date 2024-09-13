@@ -1,0 +1,58 @@
+\documentclass{assignment}
+
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{adjustbox}
+\usepackage{titlesec}
+\usepackage{soul}
+\usepackage{csvsimple}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usetikzlibrary{shapes, arrows}
+
+\usepackage{bm}
+\usepackage{amsmath,amssymb}
+
+\usetikzlibrary{calc,patterns,angles,quotes}
+\setlength{\parindent}{0pt}
+
+\hypersetup{
+pdftitle={Topology Optimisation},
+pdfsubject={Structural optimisation of a truss structure},
+pdfauthor={Tommaso Bocchietti}
+}
+
+\makeglossaries
+
+\begin{document}
+
+\title{Topology Optimisation \\ Structural optimisation of a truss structure}
+\author{Tommaso Bocchietti 10740309}
+\date{A.Y. 2024/25}
+
+\maketitle
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./pdf/Polimi_logo_coverpage.pdf}
+    \label{fig:Polimi_logo}
+\end{figure}
+
+\clearpage
+\tableofcontents
+\listoffigures
+\listoftables
+\lstlistoflistings
+% \printglossary[type=\acronymtype]
+
+\clearpage
+\input{src/01 - requests.tex}
+\input{src/02 - methodology.tex}
+\input{src/03 - theoretical_background.tex}
+
+% \clearpage
+% \bibliographystyle{plain}
+% \bibliography{ref}
+
+\end{document}

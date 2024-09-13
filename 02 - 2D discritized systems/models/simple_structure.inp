@@ -1,0 +1,24 @@
+! Topology Optimization
+! Truss cantilever optimization
+
+*NODES
+! n. of node - constraint code (x,y) - x coordinate - y coordinate
+1	0	1	0	0
+2	1	1	1250	0
+3	0	0	1250	1250
+4	0	0	0	1250
+*ENDNODES
+
+*BEAMS
+! n. of elem. - n. of input node - n. of output node - n. of prop.
+1	1	2	1
+2	2	3	1
+3	3	4	1
+4	4	1	1
+5	1	3	1
+*ENDBEAMS
+
+*PROPERTIES
+! N. of prop. - E - A0
+1   210000  800
+*ENDPROPERTIES
