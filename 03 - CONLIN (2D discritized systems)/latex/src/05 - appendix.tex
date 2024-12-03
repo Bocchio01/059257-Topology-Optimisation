@@ -1,0 +1,56 @@
+\appendix
+\section{Compliance minimization flowchart}
+\label{sec:compliance_minimization_flowchart}
+
+The flowchart in Figure \ref{fig:compliance_minimization_flowchart} shows the steps to solve a compliance minimization problem.
+One can refer to Section \ref{subsubsec:compliance_minimization_problem} for a detailed explanation of the theoretical background.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[node distance=1.8cm]
+
+        % Nodes
+        \node (start) [startstop] {Start};
+        \node (load_structure) [io, below of=start] {Load structure};
+        \node (boundary_conditions) [process, below of=load_structure] {Apply boundary conditions};
+
+        \node (while) [decision, below of=boundary_conditions, yshift=-0.8cm] {$|\frac{\partial C}{\partial \bm{x}}| > \epsilon$};
+        \node (FEM) [process, below of=while, yshift=-0.8cm] {Run FEM Analysis};
+        \node (sensitivity_analysis) [process, below of=FEM] {Sensitivity Analysis ($\frac{\partial C}{\partial x_i}$)};
+        \node (dual_problem_solution) [process, below of=sensitivity_analysis] {Solve the dual problem and obtain $\bm{\lambda}^*$};
+        \node (solution_update) [process, below of=dual_problem_solution] {Update design variables $\bm{x}(\bm{\lambda}^*)$};
+
+        \node (stop) [startstop, left of=FEM, xshift=-3cm] {Stop};
+
+        % Arrows
+        \draw [arrow] (start) -- (load_structure);
+        \draw [arrow] (load_structure) -- (boundary_conditions);
+        \draw [arrow] (boundary_conditions) -- (while);
+        \draw [arrow] (while) -- node[anchor=west] {True} (FEM);
+        \draw [arrow] (FEM) -- (sensitivity_analysis);
+        \draw [arrow] (sensitivity_analysis) -- (dual_problem_solution);
+        \draw [arrow] (dual_problem_solution) -- (solution_update);
+        \draw [arrow] (solution_update) -- +(3,0) |- (while.east) node[pos=0.25, above, rotate=-90] {Repeat};
+
+        \draw [arrow] (while.west) -| node[pos=0.25, above] {False} (stop);
+
+    \end{tikzpicture}
+
+    \caption{Compliance minimization flowchart}
+    \label{fig:compliance_minimization_flowchart}
+
+\end{figure}
+
+
+\section{MATLAB code for the compliance minimization algorithm}
+\label{sec:matlab_code_compliance_minimization}
+
+The MATLAB code in Listing \ref{lst:core} shows the implementation of the compliance minimization algorithm.
+One can refer to Section \ref{subsubsec:compliance_minimization_algorithm} or section \ref{subsec:cb_solution_procedure} for a detailed explanation of the algorithm and the naming conventions used for the variables.
+
+\lstinputlisting[
+    style=Matlab-editor,
+    caption={MATLAB code for the compliance minimization algorithm},
+    label={lst:core}
+]{files/core.m}

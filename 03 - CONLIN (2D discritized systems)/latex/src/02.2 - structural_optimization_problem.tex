@@ -1,0 +1,132 @@
+\subsection{Structural optimization problem (linear elastic)}
+\label{subsec:structural_optimization_problem}
+
+Based on the general optimization problem described in Section \ref{subsec:optimization_theory}, we can now define the structural optimization problem for a linear elastic structure.
+
+Considering a non-singular $K$ matrix, we can define the nested formulation of the structural optimization problem as follows:
+
+\begin{equation}
+    \begin{aligned}
+        (SO)_{sf} \quad & \begin{cases}
+                              \min_{\bm{x}} & f(\bm{x}, \bm{u}(\bm{x}))                                \\
+                              \text{s. t.}  & g_i(\bm{x}, \bm{u}(\bm{x})) \le 0, \quad i = 1, \dots, m \\
+                                            & \bm{x} \in \Omega
+                          \end{cases}             \\
+                        & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} \le x_j \le x_j^{max}, \quad j = 1, \dots, n \}
+    \end{aligned}
+    \label{eq:structural_optimization_problem}
+\end{equation}
+
+Notice that the dependence of the displacement field $\bm{u}(\bm{x})$ on the design variable $\bm{x}$ is derived from linear elasticity hypothesis as:
+
+\begin{equation}
+    \bm{u}(\bm{x}) = K^{-1}(\bm{x}) \bm{F}(\bm{x})
+    \label{eq:displacement_field}
+\end{equation}
+
+In both the equations above, the design variables $\bm{x}$ can represent the material properties of the structure, such as the Young's modulus or the density of the material at each element of the structure, or the geometry of the structure, such as the cross-sectional area of the elements or the thickness of the elements.
+
+In Equation \ref{eq:structural_optimization_problem}, we still haven't defined the objective function $f(\bm{x}, \bm{u}(\bm{x}))$ and the constraints $g_i(\bm{x}, \bm{u}(\bm{x}))$.
+In the following, we will define two common structural optimization problems: the compliance minimization problem and the volume minimization problem.
+
+
+\subsubsection{Compliance minimization problem}
+\label{subsubsec:compliance_minimization_problem}
+
+One common type of structural optimization problem, is the minimization of the compliance having a volume constraint.
+
+Compliance is a measure of strain energy stored in a structure, and can be computed from definition as:
+
+\begin{equation}
+    C_j = \frac{1}{2} \int \delta_j \varepsilon_j dV_j = \frac{1}{2} \bm{u}_j^T \bm{K}_j \bm{u}_j
+    \label{eq:compliance_definition}
+\end{equation}
+
+The summation of the compliance of all the elements in the structure gives the total compliance of the structure:
+
+\begin{equation}
+    C = \sum_{j=1}^{n} C_j = \frac{1}{2} \bm{u}^T \bm{K} \bm{u} \approx \bm{F}^T \bm{u}
+    \label{eq:total_compliance}
+\end{equation}
+
+By doing so, the compliance minimization problem can be formulated as follows:
+
+\begin{equation}
+    \begin{aligned}
+        (P)_{nf} \quad & \begin{cases}
+                             \min_{\bm{x}} & \bm{F}^T \bm{u}                     \\
+                             \text{s. t.}  & \sum_{j=1}^{n} V_j - V_{max} \leq 0 \\
+                                           & \bm{x} \in \Omega
+                         \end{cases}                                 \\
+                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} \le x_j \le x_j^{max}, \quad j = 1, \dots, n \}
+    \end{aligned}
+    \label{eq:compliance_minimization_problem}
+\end{equation}
+
+One can also proof that the compliance minimization problem is a convex optimization problem, and thus it can be solved efficiently using convex optimization algorithms such as Sequential Linear Programming (SLP) or Convex Linearization (CONLIN) as described in Section \ref{subsec:optimization_theory}.
+
+In particular, if we suppose to adopt CONLIN approximation to solve the compliance minimization problem, we obtain the following linear approximation of $(P)_{nf}$ of Equation \ref{eq:compliance_minimization_problem}:
+
+\begin{equation}
+    \begin{aligned}
+        (P)_{nf}^C \quad & \begin{cases}
+                               \min_{\bm{x}} & f^{(C, k)} = f(\bm{x}^{(k)}) + \sum_{j \in \Omega_-} \frac{\partial f(\bm{x}^{(k)})}{\partial x_j} \frac{x_j^{(k)}(x_j - x_j^{(k)})}{x_j} \\
+                               \text{s. t.}  & \sum_{j=1}^{n} l_j x_j - V_{max} \leq 0                                                                                                   \\
+                                             & \bm{x} \in \Omega
+                           \end{cases} \\
+                         & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} < x_j \le x_j^{max}, \quad j = 1, \dots, n \}
+    \end{aligned}
+    \label{eq:conlin_compliance_minimization_problem}
+\end{equation}
+
+Notice that the approximation of the objective function in Equation \ref{eq:conlin_compliance_minimization_problem} is based on the fact that the derivative of the compliance function is always negative, and thus only the $\Omega_-$ set of design variables is considered in the approximation:
+
+\begin{equation}
+    \frac{\partial f(\bm{x})}{\partial x_j} = \frac{\partial \bm{F}^T \bm{u}}{\partial x_j} = -\bm{u}^T \frac{\partial \bm{K}}{\partial x_j} \bm{u} = -\bm{u}^T \bm{K}_j^0 \bm{u} < 0
+    \label{eq:compliance_derivative}
+\end{equation}
+
+Based on Equation \ref{eq:conlin_compliance_minimization_problem}, we can also define the Lagrangian function $\mathcal{L}(\bm{x}, \bm{\lambda})$ as follows:
+
+\begin{equation}
+    \mathcal{L}^{k}(\bm{x}, \bm{\lambda}) = f^{(C, k)}(\bm{x}) + \lambda \left( \sum_{j=1}^{n} l_j x_j - V_{max} \right)
+    \label{eq:lagrangian_compliance_minimization}
+\end{equation}
+
+By doing so, we can define the dual optimization problem $(D)_{nf}$ as follows:
+
+\begin{equation}
+    \begin{aligned}
+        (D)_{nf} \quad & \begin{cases}
+                             \max_{\bm{\lambda}} & \min_{\bm{x} \in \Omega} \mathcal{L}(\bm{x}, \bm{\lambda}) \\
+                             \text{s. t.}        & \bm{\lambda} \ge 0
+                         \end{cases}
+    \end{aligned}
+    \label{eq:dual_compliance_minimization_problem}
+\end{equation}
+
+Where, an explicit solution to the dual optimization problem $(D)_{nf}$ can be found by solving the following equation:
+
+\begin{equation}
+    \frac{\partial \mathcal{L}^k}{\partial x_j} = 0
+\end{equation}
+
+\subsubsection{Volume minimization problem}
+\label{subsubsec:volume_minimization_problem}
+
+Another common type of structural optimization problem is the minimization of the volume having a compliance constraint.
+
+Similarly to the compliance minimization problem, the volume minimization problem can be formulated as follows:
+
+\begin{equation}
+    \begin{aligned}
+        (P)_{nf} \quad & \begin{cases}
+                             \min_{\bm{x}} & \bm{l}^T \bm{x}                  \\
+                             \text{s. t.}  & \bm{F}^T \bm{u} - C_{max} \leq 0 \\
+                                           & \bm{x} \in \Omega
+                         \end{cases}                                    \\
+                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} \le x_j \le x_j^{max}, \quad j = 1, \dots, n \}
+    \end{aligned}
+    \label{eq:volume_minimization_problem}
+\end{equation}
+

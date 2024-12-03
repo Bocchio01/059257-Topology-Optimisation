@@ -2,9 +2,10 @@ clc
 clear variables
 close all
 
+for w1 = [0.0 0.2 0.5 0.8 1.0]
 %% Structure and Applied loads
 
-[structure_brk, structure_acc] = deal(load_structure('models/motorcycle_frame.inp'));
+[undeformed_structure, structure_brk, structure_acc] = deal(load_structure('models/motorcycle_frame.inp'));
 
 % Braking
 structure_brk.nodes(8).forceX = -13000;
@@ -22,7 +23,7 @@ structure_acc.nodes(1).forceY = -8000;
 alpha = 0.1; % []
 lower_bound = 1e-3; % [mm^2]
 upper_bound = 700;  % [mm^2]
-w1 = 0.5;
+% w1 = 0.5;
 w2 = 1 - w1;
 
 max_volume = upper_bound * sum([structure_brk.elements.L], 'all');
@@ -32,7 +33,7 @@ max_volume_constrained = max_volume * alpha;
 %% Problem solution
 
 epsilon = 1e-5;
-N = 10;
+N = 200;
 lambda = 1;
 results = struct( ...
     'C', zeros(N, 1), ...
@@ -43,6 +44,10 @@ results = struct( ...
     'stress', zeros(N, length(structure_brk.elements)));
 
 for k = 1 : N
+
+    if(mod(k, 25) == 0)
+        disp(['Iteration #', num2str(k)]);
+    end
 
     % FEM Analysis
     structure_brk = structure_brk.runFEM();
@@ -75,7 +80,7 @@ for k = 1 : N
         max_volume_constrained);
     
     % Solve sum(L * A(lambda*)) - V_{0} == 0 and compute A(lambda*)
-    lambda = fsolve(handler, lambda);
+    lambda = fsolve(handler, lambda, optimoptions('fsolve', 'Display', 'off'));
     [~, A] = handler(lambda);
 
     % Variables updates
@@ -86,7 +91,7 @@ for k = 1 : N
     results.V(k) = A' * [structure_brk.elements.L]';
     results.alpha(k) = results.V(k) / max_volume;
     results.A(k, :) = A;
-    % results.stress(k, :) = structure1.computeStresses();
+    % results.stress(k, :) = structure_brk.computeStresses();
 
     % Check convergence condition
     if(norm(results.dCdA(k, :)) < epsilon)
@@ -95,15 +100,98 @@ for k = 1 : N
 
 end
 
-clear ii k
+clear ii
 clear epsilon N A handler lambda
-clear ue k0 dofIndices node2Index node1Index
+clear ue1 ue2 k01 k02 dofIndices node2Index node1Index
 
 
 %% Plots
 
-structure = structure_brk;
-run("figures\routine.m")
+reset(0)
+set(0, 'DefaultFigureNumberTitle', 'off');
+set(0, 'DefaultFigureWindowStyle', 'docked');
+set(0, 'defaultaxesfontsize', 15);
+set(0, 'DefaultLineLineWidth', 2);
+
+try
+
+    plot_struct.export_path = 'latex/img/MATLAB/motorcycle_frame';
+    plot_struct.data = cell(0);
+
+    % Undeformed
+    figure_undeformed_structure = figure('Name', 'Undeformed structure');
+
+    nexttile
+    hold on
+    grid on
+
+    plot_structure(undeformed_structure.runFEM(), struct('color', '#D95319', 'LineWidth', 2, 'force', true));
+
+    axis equal
+    axis padded
+    title('Undeformed structure')
+    xlabel('[mm]')
+    ylabel('[mm]')
+    ylim([-100 550])
+    xlim([-250 850])
+    
+
+
+    % Compliance
+    figure_comliance = figure('Name', 'Compliance');
+    tile = tiledlayout(2, 1);
+
+    % Compliance
+    nexttile;
+    hold on
+    grid on
+
+    plot(results.C(1:k), 'ob');
+
+    title(['Optimization compliance @alpha=' num2str(alpha, '%.2f')])
+    xlabel('Iteration #')
+    ylabel('Compliance [Nmm]')
+
+
+    % Results
+    figure_topology_results = figure('Name', 'Topology optimization results');
+    tile = tiledlayout(1, 2);
+
+    % Deformed braking
+    nexttile(tile, 1)
+    hold on
+    grid on
+
+    plot_structure(structure_brk);
+
+    title(['Braking load case @w1=' num2str(w1, '%.1f')])
+    xlabel('[mm]')
+    ylabel('[mm]')
+
+    % Deformed accelrating
+    nexttile(tile, 2)
+    hold on
+    grid on
+
+    plot_structure(structure_acc);
+
+    title(['Acceleration load case @w2=' num2str(w2, '%.1f')])
+    xlabel('[mm]')
+    ylabel('[mm]')
+
+
+    % plot_struct.data{end+1} = {figure_undeformed_structure, '/undeformed_structure'};
+    % plot_struct.data{end+1} = {figure_comliance, ['/compliance_alpha' num2str(alpha*100)]};
+    plot_struct.data{end+1} = {figure_topology_results, ['/results_w' num2str(w1*100)]};
+
+    export_pdf_figure(plot_struct);
+    clear plot_struct plot_idx current_plot local_path filename tile
+
+catch
+    disp('Could not export figure')
+end
+
+end
 
 
 %% Functions

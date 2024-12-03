@@ -1,37 +1,8 @@
-clc
-clear variables
-close all
-
-%% Structure and Applied loads
-
-structure = load_structure('models/truss_cantilever.inp');
-structure.nodes(49).forceY = -6000;
-
-
-%% Optimization problem constraints
-
-alpha = 0.5; % []
-lower_bound = 1e-4; % [mm^2]
-upper_bound = 800;  % [mm^2]
-
-max_volume = upper_bound * sum([structure.elements.L], 'all');
-max_volume_constrained = max_volume * alpha;
-
-
-%% Problem solution
-
-epsilon = 1e-5;
-N = 10;
-lambda = 1;
-results = struct( ...
-    'C', zeros(N, 1), ...
-    'V', zeros(N, 1), ...
-    'alpha', zeros(N, 1), ...
-    'dCdA', zeros(N, length(structure.elements)), ...
-    'A', zeros(N, length(structure.elements)), ...
-    'stress', zeros(N, length(structure.elements)));
-
 for k = 1 : N
+
+    if(mod(k, 25) == 0)
+        disp(['Iteration #', num2str(k)]);
+    end
 
     % FEM Analysis
     structure = structure.runFEM();
@@ -56,16 +27,16 @@ for k = 1 : N
         results.dCdA(k, :)', ...
         [structure.elements.L]', ...
         max_volume_constrained);
-    
-    % Solve sum(L * A(lambda*)) - V_{0} == 0 and compute A(lambda*)
-    lambda = fsolve(handler, lambda);
+
+    % Solve sum(L * A(lambda*)) - V_{0} == 0 and compute lambda*
+    lambda = fsolve(handler, lambda, optimoptions('fsolve', 'Display', 'off'));
     [~, A] = handler(lambda);
 
     % Variables updates
     for ii = 1:length(structure.elements)
         structure.elements(ii).A = A(ii);
     end
-    results.V(k) = A' * [structure1.elements.L]';
+    results.V(k) = A' * [structure.elements.L]';
     results.alpha(k) = results.V(k) / max_volume;
     results.A(k, :) = A;
     results.stress(k, :) = structure.computeStresses();
@@ -76,15 +47,6 @@ for k = 1 : N
     end
 
 end
-
-clear ii k
-clear epsilon N A handler lambda
-clear ue k0 dofIndices node2Index node1Index
-
-
-%% Plots
-
-run("figures\routine.m")
 
 
 %% Functions
