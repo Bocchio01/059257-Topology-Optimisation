@@ -1,0 +1,25 @@
+\subsection{Variable thickness sheet problem}
+\label{sec:variable_thickness_sheet_problem}
+
+The variable thickness sheet problem is a classical example of a topology optimization problem for 2D distributed systems.
+The goal is to find the optimal distribution of material within a given design domain, subject to a set of constraints and loads.
+
+The objective function to be minimized is typically the compliance of the structure, which is a measure of its ability to deform under load.
+Instead, the design variables are the thickness of the sheet at each point in the domain, which can assume continuous values within a predefined range.
+
+Under these conditions, the problem can be formulated as follows:
+
+\begin{equation}
+    \begin{aligned}
+        (P)_{nf} \quad & \begin{cases}
+                             \min_{\bm{x}} & C(\bm{x}) = \bm{F}^T \bm{u}         \\
+                             \text{s. t.}  & \sum_{j=1}^{n} V_j - V_{max} \leq 0 \\
+                                           & \bm{x} \in \Omega
+                         \end{cases}                              \\
+                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid 0 < x_j^{min} \le x_j \le 1, \quad j = 1, \dots, n \}
+    \end{aligned}
+    \label{eq:compliance_minimization_problem}
+\end{equation}
+
+Where one can notice the definition of the compliance function $C(\bm{x})$ as for the objective function, and the constraint on the volume of the material $V_j$.
+As said before, in order to avoid singularities in the optimization process, the thickness of the sheet is forced to never assume a value of zero, hence the lower bound $0 < x_j^{min}$.

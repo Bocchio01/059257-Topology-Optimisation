@@ -1,0 +1,77 @@
+\documentclass{assignment}
+
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{adjustbox}
+\usepackage{titlesec}
+\usepackage{soul}
+\usepackage{csvsimple}
+
+\usepackage{bm}
+\usepackage{amsmath,amssymb}
+
+\usepackage{pgfplots}
+\usepackage{graphics, epsfig}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{matlab-prettifier}
+\usepackage{multirow}
+
+\usetikzlibrary{decorations.pathmorphing, decorations.markings}
+\usetikzlibrary{positioning}
+
+\usetikzlibrary{calc,patterns,angles,quotes}
+\setlength{\parindent}{0pt}
+
+\usetikzlibrary{shapes, arrows}
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium stretches=true, trapezium left angle=70, trapezium right angle=110, minimum width=4cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process} = [rectangle, minimum width=4cm, minimum height=1cm, text centered, text width=4cm, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\hypersetup{
+pdftitle={Structural Optimization},
+pdfsubject={Structural optimization of 2D distributed systems},
+pdfauthor={Tommaso Bocchietti}
+}
+
+\makeglossaries
+
+\begin{document}
+
+\title{Topology Optimization \\ Structural optimization of 2D distributed systems}
+\author{Tommaso Bocchietti 10740309}
+\date{A.Y. 2024/25}
+
+\maketitle
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./pdf/Polimi_logo_coverpage.pdf}
+    \label{fig:Polimi_logo}
+\end{figure}
+
+\clearpage
+\tableofcontents
+\listoffigures
+% \listoftables
+% \lstlistoflistings
+% \printglossary[type=\acronymtype]
+
+\clearpage
+\input{src/01 - methodology.tex}
+\input{src/02 - theoretical_background.tex}
+\input{src/03 - 99_lines_code.tex}
+\input{src/04 - requests_solutions.tex}
+
+\vspace*{\fill}
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{references.bib}
+
+\clearpage
+\input{src/05 - appendix.tex}
+
+\end{document}

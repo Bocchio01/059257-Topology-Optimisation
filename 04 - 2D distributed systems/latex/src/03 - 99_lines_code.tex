@@ -1,0 +1,32 @@
+\section{99 lines code}
+\label{sec:99_lines_code}
+
+All the previously described theoretical foundation has been already implemented by Sigmund \cite{Sigmund2001} in it's 99 lines code.
+The code is a \texttt{MATLAB} function that solves the compliance minimization problem for a 2D distributed rectangular domain with a uniform grid of elements.
+Penalization of intermediate densities is achieved base on SIMP model and a simple anti-checkerboard filter is applied to avoid checkerboard patterns.
+The method used to solve the optimization problem is the method of moving Optimality Criteria (OC).
+
+In Appendix \ref{sec:density_based_topology_optimization} the flowchart for a generic OC algorithm is shown which is the same used in the 99 lines code.
+
+The \textit{99 lines code} can be found online at \href{https://www.topopt.mek.dtu.dk/apps-and-software/a-99-line-topology-optimization-code-written-in-matlab}{this link}.
+
+
+\paragraph{Parameters}
+
+Before jumping to the requests and solutions for the given problem, let's first introduce the parameters that can be set in the 99 lines code:
+
+\begin{lstlisting}[style=Matlab-editor]
+function x = top(nelx, nely, volfrac, penal, rmin)
+    % Rest of the code ...
+end
+\end{lstlisting}
+
+From the function signature we can see that the function \texttt{top} takes 5 parameters:
+
+\begin{itemize}
+    \item \texttt{nelx}: number of elements in the x-direction
+    \item \texttt{nely}: number of elements in the y-direction
+    \item \texttt{volfrac}: volume fraction ($\alpha$)
+    \item \texttt{penal}: penalization factor ($p$)
+    \item \texttt{rmin}: filter radius ($r_{min}$)
+\end{itemize}

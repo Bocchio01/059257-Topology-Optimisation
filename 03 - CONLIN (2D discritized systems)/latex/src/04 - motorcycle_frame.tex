@@ -29,7 +29,7 @@ Data for the two load cases are reported in Table \ref{tab:load_braking} and Tab
         \textbf{Node}      & \textbf{Load [N]} & \textbf{Direction} \\
         \hline
         \multirow{2}{*}{8} & 13000             & $-x$               \\
-                           & 2000              & $-y$               \\
+                           & 2000              & $-y$               \\ \hline
         9                  & 9000              & $+x$               \\
         \hline
     \end{tabular}
@@ -57,12 +57,7 @@ Data for the two load cases are reported in Table \ref{tab:load_braking} and Tab
 \end{table}
 
 Material properties are the same as in the previous case, with $E = 210 GPa$ (steel).
-
-\hl{Better}
-
-We are asked to perform the optimization of the structure when $\alpha = 0.1$, $LB = 0.001 [mm^2]$ and $UB = 700 [mm^2]$.
-Moreover, given that we have to consider two load cases simultaneously, we are also given a weight factor $w_1$ and $w_2$ for each load case and we are asked to run the optimization for various values of $w_1$ and $w_2$.
-
+Optimization parameters are $\alpha = 0.1$, $LB = 0.001 [mm^2]$ and $UB = 700 [mm^2]$.
 
 
 \subsection{Solution procedure}

@@ -1,0 +1,130 @@
+\section{Results}
+\label{sec:results}
+
+The final topology optimization results are shown in Figures \ref{fig:optimized_results} and \ref{fig:smoothed_results}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/optimized_design_domain.png}
+    \caption{Optimized design.}
+    \label{fig:optimized_results}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.48\textwidth]{img/smoothed_design_domain_front_no_bg.png}
+    \hfill
+    \includegraphics[width=0.48\textwidth]{img/smoothed_design_domain_rear_no_bg.png}
+    \caption{Smoothed design.}
+    \label{fig:smoothed_results}
+\end{figure}
+
+Due to limitation in the number of elements imposed by the student version of the software, the meshing element has been chosen to be tetrahedral with a size of $3.0 [mm]$ on both the design and non-design domain.
+
+The optimization process converged after $47$ iterations with a final weighted compliance of $224.15[J]$ and a final mass of $0.45[kg]$ (initial mass was $1.98[kg]$).
+Both the constraints imposed on the stiffness are respected (stiffness computed as the inverse of the maximum rotation at point $A$ in presence of a unitary moment):
+
+\begin{itemize}
+    \item Camber stiffness: $K_c = 1 / 6.26 \times 10^{-6} [Nm / rad] = 159.7 \cdot 10^3 [Nm/rad]$;
+    \item Toe stiffness: $K_t = 1 / 1.14 \times 10^{-5} [Nm / rad] = 87.7 \cdot 10^3 [Nm/rad]$.
+\end{itemize}
+
+Given the imposed high stiffness constraints, we can expect that also the dissipation of energy from the vehicle due to out-of-plane deformations will be minimized, thus improving the overall vehicle performance.
+
+
+\subsection{Finite Element Analysis}
+\label{subsec:finite_element_analysis}
+
+The final design has been analyzed using a Finite Element Analysis (FEA) to verify the stiffness and the stress distribution.
+The results are shown in the following figures.
+
+\subsubsection{Von Mises Stress}
+\label{subsubsec:von_mises_stress}
+
+From Von Mises stress distribution, it is possible to observe that the hotspots is located at the interface between the lower control arm and the main body of the hub carrier.
+Moreover, the most stressed condition appears to be the obstacle load cases, with a maximum stress of $31 [MPa]$ which is below the yield strength of the material.
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/pure_rolling.png}
+        \caption*{Pure rolling.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/braking.png}
+        \caption*{Braking.}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/internal_turn.png}
+        \caption*{Internal turn.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/external_turn.png}
+        \caption*{External turn.}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/internal_obstacle.png}
+        \caption*{Internal obstacle.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/fem/external_obstacle.png}
+        \caption*{External obstacle.}
+    \end{minipage}
+\end{figure}
+
+
+\subsubsection{Displacement}
+\label{subsubsec:displacement}
+
+In order to evaluate the deformation of the hub carrier, the displacement distribution has been analyzed.
+A scale factor of $500$ has been applied in order to better visualization.
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/pure_rolling.png}
+        \caption*{Pure rolling.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/braking.png}
+        \caption*{Braking.}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/internal_turn.png}
+        \caption*{Internal turn.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/external_turn.png}
+        \caption*{External turn.}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/internal_obstacle.png}
+        \caption*{Internal obstacle.}
+    \end{minipage}
+    \begin{minipage}[b]{0.5\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/displacements/external_obstacle.png}
+        \caption*{External obstacle.}
+    \end{minipage}
+\end{figure}

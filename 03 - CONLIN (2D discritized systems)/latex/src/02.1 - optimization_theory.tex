@@ -70,8 +70,8 @@ To do so, the sequential linear programming (SLP) method is often used.
                               \text{s. t.}  & g_i(\bm{x}^{(k)}) + \nabla g_i(\bm{x}^{(k)})^T (\bm{x} - \bm{x}^{(k)}) \leq 0, \quad i = 1, \dots, m, \\
                                             & h_j(\bm{x}^{(k)}) + \nabla h_j(\bm{x}^{(k)})^T (\bm{x} - \bm{x}^{(k)}) = 0, \quad j = 1, \dots, n,    \\
                                             & \bm{x} \in \Omega
-                          \end{cases} \\
-                        & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} x_j \leq x_j^{max}, -l_j^k \leq x_j - x_j^k \leq u_j^k , \quad j = 1, \dots, n \}
+                          \end{cases}      \\
+                        & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid x_j^{min} \leq x_j \leq x_j^{max}, -l_j^k \leq x_j - x_j^k \leq u_j^k , \quad j = 1, \dots, n \}
     \end{aligned}
     \label{eq:slp_optimization_problem}
 \end{equation}
@@ -110,4 +110,4 @@ Where $\Omega_+$ and $\Omega_-$ are the sets of design variables $x_j$ for which
 
 Notice also that Lagrangian duality can be applied to the CONLIN approximation, leading to a dual optimization problem that is easier to solve than the original optimization problem.
 
-\hl{It can be demonstrated that $g_i^{C,k} \ge g_i^{RL, k}$. What is $g_i^{RL, k}$?}
+% \hl{It can be demonstrated that $g_i^{C,k} \ge g_i^{RL, k}$. What is $g_i^{RL, k}$?}

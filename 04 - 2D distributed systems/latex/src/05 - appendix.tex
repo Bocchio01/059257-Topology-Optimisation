@@ -1,0 +1,46 @@
+\appendix
+\section{Density-based topology optimization}
+\label{sec:density_based_topology_optimization}
+
+The flowchart in Figure \ref{fig:density_based_top} shows the steps to solve a generic density-based topology optimization problem.
+
+One can refer to Section \ref{sec:theoretical_background} for a detailed explanation of the theoretical background.
+
+\begin{figure}[H]
+    \centering
+
+    \begin{tikzpicture}[node distance=1.8cm]
+
+        % Nodes
+        \node (start) [startstop] {Start};
+        \node (load_structure) [io, below of=start] {Load structure};
+        \node (boundary_conditions) [process, below of=load_structure] {Apply boundary conditions};
+
+        \node (while) [decision, below of=boundary_conditions, yshift=-0.8cm] {$|x_{new} - x_{old}| > \epsilon$};
+        \node (FEM) [process, below of=while, yshift=-0.8cm] {Run FEM Analysis};
+        \node (sensitivity_analysis) [process, below of=FEM] {Sensitivity Analysis ($\frac{\partial C}{\partial x_i}$)};
+        \node (filter_sensitivity) [process, below of=sensitivity_analysis] {Filter the sensitivities ($\frac{\hat{\partial C}}{\partial x_i}$)};
+        \node (OC_method) [process, below of=filter_sensitivity] {Optimization algorithm (OC, MMA, CONLIN etc.)};
+        \node (solution_update) [process, below of=OC_method] {Update design variables $\bm{x}(\bm{\lambda}^*)$};
+
+        \node (stop) [startstop, left of=FEM, xshift=-3cm] {Stop};
+
+        % Arrows
+        \draw [arrow] (start) -- (load_structure);
+        \draw [arrow] (load_structure) -- (boundary_conditions);
+        \draw [arrow] (boundary_conditions) -- (while);
+        \draw [arrow] (while) -- node[anchor=west] {True} (FEM);
+        \draw [arrow] (FEM) -- (sensitivity_analysis);
+        \draw [arrow] (sensitivity_analysis) -- (filter_sensitivity);
+        \draw [arrow] (filter_sensitivity) -- (OC_method);
+        \draw [arrow] (OC_method) -- (solution_update);
+        \draw [arrow] (solution_update) -- +(3,0) |- (while.east) node[pos=0.25, above, rotate=-90] {Repeat};
+
+        \draw [arrow] (while.west) -| node[pos=0.25, above] {False} (stop);
+
+    \end{tikzpicture}
+
+    \caption{Compliance minimization flowchart}
+    \label{fig:density_based_top}
+
+\end{figure}
