@@ -91,10 +91,10 @@ axis tight
 plot_struct.export_path = 'latex/img/MATLAB';
 plot_struct.data = cell(0);
 
-plot_struct.data{end+1} = {figure_p, '/req_1p'};
-plot_struct.data{end+1} = {figure_rmin, '/req_1rmin'};
-plot_struct.data{end+1} = {figure_load_case_2, '/req_2'};
+% plot_struct.data{end+1} = {figure_p, '/req_1p'};
+% plot_struct.data{end+1} = {figure_rmin, '/req_1rmin'};
+% plot_struct.data{end+1} = {figure_load_case_2, '/req_2'};
 plot_struct.data{end+1} = {figure_load_case_3, '/req_3'};
-plot_struct.data{end+1} = {figure_load_case_4, '/req_4'};
+% plot_struct.data{end+1} = {figure_load_case_4, '/req_4'};
 
 export_pdf_figure(plot_struct);

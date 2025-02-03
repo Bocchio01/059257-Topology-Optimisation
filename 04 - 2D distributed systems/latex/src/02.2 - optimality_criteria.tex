@@ -1,9 +1,9 @@
-\subsection{Optimality criteria method}
+\subsection{Optimality Criteria method}
 \label{subsec:optimality_criteria}
 
 Equation \ref{eq:compliance_minimization_problem} is nothing more that a traditional compliance minimization problem with a volume constraint, which is a common formulation for structural optimization problems.
 One can show that the problem is convex, and can be solved efficiently using a variety of optimization algorithms.
-Among those, we recall the CONLIN (Convex Linearization) or MMA (Method of Moving Asymptotes) algorithms, which are widely used in the field of topology optimization.
+Among those, we recall the CONLIN (Convex Linearization) or MMA (Method of Moving Asymptotes) algorithms, which are widely used in the field of topology optimization for mechanical structures.
 
 However, in this work, we will focus on the Optimality Criteria (OC) method, which is a simple yet effective optimization algorithm that is particularly suitable for the variable thickness sheet problem.
 
@@ -11,20 +11,20 @@ In order to apply the OC method, we need at first to move to a Lagrangian formul
 To do so, we can work from the compliance definition and derive its sensitivity with respect to the design variables $\bm{x}$:
 
 \begin{equation}
-    C(\bm{x}^k) = \bm{F}^T \bm{u}^k = \bm{u}^{T,k} \bm{K}^k \bm{u}^k = \sum_{j=1}^{n} \bm{u}_j^{T,k} \bm{K}_j^k \bm{u}_j^k = \sum_{j=1}^{n} (x_j^k) \bm{u}_j^{T,k} \bm{K}_{0j}^k \bm{u}_j^k
-    \label{eq:compliance_sensitivity}
+    C(\bm{x}^{(k)}) = \bm{F}^T \bm{u}^{(k)} = \bm{u}^{T(k)} \bm{K} \bm{u}^{(k)} = \sum_{j=1}^{n} \bm{u}_j^{T(k)} \bm{K}_j \bm{u}_j^{(k)} = \sum_{j=1}^{n} (x_j^{(k)}) \bm{u}_j^{T(k)} \bm{K}_j^0 \bm{u}_j^{(k)}
+    \label{eq:compliance_sensitivity_no_SIMP}
 \end{equation}
 
-Where $\bm{K}_{0j}^k$ is the stiffness matrix of the $j$-th element in the structure, and $\bm{u}_j^k$ is the displacement vector of the same element.
+Where $\bm{K}_j^0$ is the global stiffness matrix of the $j$-th element in the structure divided by the thickness of the element ($x_j^{(k)}$), and $\bm{u}_j^{(k)}$ is the displacement vector of the same element.
 
-By differentiating Equation \ref{eq:compliance_sensitivity} with respect to the design variables, we can obtain the sensitivity of the compliance function:
+By differentiating Equation \ref{eq:compliance_sensitivity_no_SIMP} with respect to the design variables, we can obtain the sensitivity of the compliance function:
 
 \begin{equation}
-    \frac{\partial C}{\partial x_i} = - \bm{u}_i^{T,k} \bm{K}_{0i}^k \bm{u}_i^k
+    \frac{\partial C}{\partial x_j} = - \bm{u}_j^{T(k)} \bm{K}_j^0 \bm{u}_j^{(k)}
     \label{eq:compliance_sensitivity_derivative}
 \end{equation}
 
-The OC method is based on the idea of approximating the compliance function with a linear function, and then updating the design variables in order to minimize the compliance.
+The OC method is based on the idea of approximating the compliance function at each iteration so to force the optimization problem to be convex.
 This approach is extremely similar to the one adopted in the CONLIN algorithm, but the interviewing variables are different.
 In particular, for the OC method, the interviewing variables are defined as:
 
@@ -36,36 +36,38 @@ In particular, for the OC method, the interviewing variables are defined as:
 By doing so, the compliance function can be approximated via Taylor expansion as:
 
 \begin{equation}
-    C(\bm{x}) \approx C(\bm{x}^k) + \sum_{j=1}^{n} \frac{\partial C}{\partial y_e} \big|_{\bm{x}^k}  (y_e - y_e^k)
+    C(\bm{x}) \approx C(\bm{x}^{(k)}) + \sum_{e=1}^{n} \frac{\partial C(\bm{x}^{(k)})}{\partial y_e}  (y_e - y_e^{(k)})
     \label{eq:oc_compliance_approximation}
 \end{equation}
 
 One can compute the derivative of the compliance function with respect to the interviewing variables as:
 
 \begin{equation}
-    \frac{\partial C}{\partial y_e} = \frac{\partial C}{\partial x_e} \frac{\partial x_e}{\partial y_e} = \frac{1}{\alpha} (\bm{u}_e^k)^T \bm{K}_{e}^0 \bm{u}_e^k (\bm{x}_e^k)^{\alpha + 1}
+    \frac{\partial C(\bm{x}^{(k)})}{\partial y_e} = \frac{\partial C}{\partial x_e} \frac{\partial x_e}{\partial y_e} = \frac{1}{\alpha} \bm{u}_e^{T(k)} \bm{K}_{e}^0 \bm{u}_e^{(k)} (\bm{x}_e^{(k)})^{\alpha + 1}
     \label{eq:oc_compliance_derivative}
 \end{equation}
 
 Substituting in Equation \ref{eq:oc_compliance_approximation}, we obtain the following linear approximation of the compliance function:
 
 \begin{equation}
-    C(\bm{x}) \approx C(\bm{x}^k) + \sum_{j=1}^{n} \frac{1}{\alpha} (\bm{u}_e^k)^T \bm{K}_{e}^0 \bm{u}_e^k (\bm{x}_e^k)^{\alpha + 1}  (y_e - y_e^k) \approx \text{const} + \sum_{j=1}^{n} b_e^k x_e^{-\alpha}
+    \begin{aligned}
+        C(\bm{x}) & \approx C(\bm{x}^{(k)}) + \sum_{j=1}^{n} \frac{1}{\alpha} \bm{u}_e^{T(k)} \bm{K}_{e}^0 \bm{u}_e^{(k)} (\bm{x}_e^{(k)})^{\alpha + 1} (y_e - y_e^{(k)}) \\
+                  & \approx \text{const} + \sum_{j=1}^{n} b_e^{(k)} x_e^{-\alpha}
+    \end{aligned}
     \label{eq:oc_compliance_linear_approximation}
 \end{equation}
 
-Where $b_e^k = \frac{1}{\alpha} (\bm{u}_e^k)^T \bm{K}_{e}^0 \bm{u}_e^k (\bm{x}_e^k)^{\alpha + 1}$.
-
-The linearized optimization problem can then be formulated as:
+Where $b_e^{(k)}$ takes exactly the same expression as in Equation \ref{eq:oc_compliance_derivative}.
+The convex and separable optimization problem can then be formulated as:
 
 \begin{equation}
     \begin{aligned}
         (P)_{oc} \quad & \begin{cases}
-                             \min_{\bm{x}} & \sum_{j=1}^{n} b_e^k x_e^{-\alpha}  \\
-                             \text{s. t.}  & \sum_{j=1}^{n} V_j - V_{max} \leq 0 \\
+                             \min_{\bm{x}} & \sum_{e=1}^{n} b_e^{(k)} x_e^{-\alpha} \\
+                             \text{s. t.}  & \sum_{e=1}^{n} V_e - V_{max} \leq 0    \\
                                            & \bm{x} \in \Omega
-                         \end{cases}                                   \\
-                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid 0 < x_j^{min} < x_j \le x_j^{max}, \quad j = 1, \dots, n \}
+                         \end{cases}                                \\
+                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid 0 < x_e^{min} < x_e \le x_e^{max}, \quad e = 1, \dots, n \}
     \end{aligned}
     \label{eq:oc_optimization_problem}
 \end{equation}
@@ -75,37 +77,41 @@ As is commonly done, to solve this linearized optimization problem, we can adopt
 \begin{equation}
     \begin{aligned}
         (D)_{oc} \quad & \begin{cases}
-                             \max_{\bm{\lambda}} & \min_{\bm{x} \in \Omega} \mathcal{L}(\bm{x}, \bm{\lambda}) \\
-                             \text{s. t.}        & \bm{\lambda} \geq 0
-                         \end{cases}                          \\
-                       & \mathcal{L}(\bm{x}, \bm{\lambda}) = \sum_{j=1}^{n} b_e^k x_e^{-\alpha} + \bm{\lambda}^T \left( \sum_{j=1}^{n} V_j - V_{max} \right)
+                             \max_{\lambda} & \min_{\bm{x} \in \Omega} \mathcal{L}(\bm{x}, \lambda) \\
+                             \text{s. t.}   & \lambda \geq 0
+                         \end{cases}                                      \\
+                       & \mathcal{L}(\bm{x}, \lambda) = \sum_{e=1}^{n} b_e^{(k)} x_e^{-\alpha} + \lambda \left( \sum_{e=1}^{n} V_e - V_{max} \right)
     \end{aligned}
     \label{eq:oc_dual_optimization_problem}
 \end{equation}
 
-The dual optimization problem $(D)_{oc}$ can be solved by finding the optimal values of the Lagrange multipliers $\bm{\lambda}$, which can be done by solving the following equation:
+The dual optimization problem $(D)_{oc}$ can be solved by finding the optimal value of the design variables $\bm{x}$, which can be done by solving the following equation:
 
 \begin{equation}
-    \frac{\partial \mathcal{L}}{\partial x_j} = -\alpha b_e^k x_e^{-\alpha - 1} + \lambda_j a_e = 0 \rightarrow x_e^* = \left( \frac{\alpha b_e^k}{\lambda_j a_e} \right)^{\frac{1}{\alpha + 1}}
+    \frac{\partial \mathcal{L}}{\partial x_e} = -\alpha b_e^{(k)} x_e^{-\alpha - 1} + \lambda a_e = 0 \rightarrow x_e^* = \left( \frac{\alpha b_e^{(k)}}{\lambda a_e} \right)^{\frac{1}{\alpha + 1}}
     \label{eq:oc_dual_optimization_solution}
 \end{equation}
+
+Where $a_e = \frac{\partial V}{\partial x_e}$ is the volume sensitivity with respect to the design variable $x_e$.
 
 We should always check that the solution of the dual optimization problem satisfies the constraints of the primal optimization problem, that is:
 
 \begin{equation}
-    x_j^{(k+1)}(\lambda) = \begin{cases}
-        x_j^*     & \text{if } x_j^* \in [x_j^{min}, x_j^{max}] \\
-        x_j^{min} & \text{if } x_j^* < x_j^{min}                \\
-        x_j^{max} & \text{if } x_j^* > x_j^{max}
+    x_e^{(k+1)}(\lambda) = \begin{cases}
+        x_e^*     & \text{if } x_e^* \in [x_e^{min}, x_e^{max}] \\
+        x_e^{min} & \text{if } x_e^* < x_e^{min}                \\
+        x_e^{max} & \text{if } x_e^* > x_e^{max}
     \end{cases}
+    \label{eq:oc_dual_optimization_projection}
 \end{equation}
 
 Finally, we can use the following update rule to find the optimal value of the Lagrangian multiplier $\lambda$:
 
 \begin{equation}
-    \frac{\partial \psi^k(\lambda)}{\partial \lambda} = \sum_{j=1}^{n} a_e x_j^{(k+1)} - V_{max} = 0
+    \frac{\partial \phi^{(k)}(\lambda)}{\partial \lambda} = \sum_{e=1}^{n} a_e x_e^{(k+1)}(\lambda^*) - V_{max} = 0
+    \label{eq:oc_dual_optimization_lambda}
 \end{equation}
 
-So basically, one can solve for the Lagrangian multiplier $\lambda$ by finding numerically the root of the equation above.
-Once the optimal value of $\lambda$ is found, we can update the design variables $\bm{x}$ using the projection operator defined above, and then update the Lagrangian function $\mathcal{L}^{k}(\bm{x}, \bm{\lambda})$.
+So basically, one can solve for the Lagrangian multiplier $\lambda$ by finding numerically the root of Equation \ref{eq:oc_dual_optimization_lambda}.
+Once the optimal value of $\lambda^*$ is found, we can update the design variables $\bm{x}(\lambda)$ using the projection operator defined in Equation \ref{eq:oc_dual_optimization_projection}.
 This iterative procedure can be repeated until convergence is reached.

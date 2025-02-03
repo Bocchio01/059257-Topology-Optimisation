@@ -1,7 +1,7 @@
 \subsection{Penalizing intermediate densities}
 \label{subsec:penalization_SIMP}
 
-When dealing with density based topology optimization problems, it is common practice to penalize intermediate values of the design variables.
+When dealing with density based topology optimization problems (or equivalently with thickness based problems), its common practice to penalize intermediate values of the design variables.
 This is done to encourage the optimization process to find solutions with a more binary distribution of material, which is often more suitable for manufacturing processes.
 
 One of the most common penalization methods is the Solid Isotropic Material with Penalization (SIMP) method.
@@ -25,29 +25,23 @@ In Figure \ref{fig:SIMP_penalization}, we can see the effect of the penalization
 \end{figure}
 
 As we can see, for $p = 1$, the penalization function is linear and does not penalize intermediate values of the density.
-On the other hand, for $p > 1$, the penalization function becomes more aggressive and penalizes intermediate values more severely.
+On the other hand, for $p > 1$, the penalization function becomes more aggressive and the algorithm is encouraged to move the design variables towards binary values.
 
-Of course, by adopting the SIMP method, one should also adjust the optimization algorithm slightly.
+Of course, by adopting the SIMP method, one should also adjust the optimization algorithm accordingly.
 In particular, starting from the global stiffness formulation, we observe that:
 
 \begin{equation}
-    K(\bm{x}) = \sum_{e=1}^{n} x_e^p K_e^0
+    K(\bm{x}) = \sum_{e=1}^{n} \rho_e^p K_e^0
     \label{eq:global_stiffness}
 \end{equation}
 
 From which we can derive the sensitivity of the compliance function with respect to the design variables:
 
 \begin{equation}
-    \frac{\partial C}{\partial x_e} = -\bm{u}^T (p \rho_e^{p-1} K_e^0) \bm{u}
+    \frac{\partial C}{\partial \rho_e} = -\bm{u}^T (p \rho_e^{p-1} K_e^0) \bm{u}
     \label{eq:compliance_sensitivity}
 \end{equation}
 
-Because of this new formulation for the sensitivity of the compliance function, we also have to adjust the update rule for the design variables in the optimization algorithm.
-In particular, recalling the criteria for the optimality of the design variables in Equation \ref{eq:optimality_criteria}, the previously defined $b_e^k$ term should be updated as follows:
+Because of this new formulation for the sensitivity of the compliance function, some parameters as $a_e^k$ and $b_e^k$ should be adjusted in the optimization algorithm to account for the modified dependence of the compliance function on the design variables.
 
-\begin{equation}
-    b_e^k = -\frac{\partial C}{\partial y_e} = \bm{u}^T (p \rho_e^{p-1} K_e^0) \bm{u}
-    \label{eq:optimality_criteria_SIMP}
-\end{equation}
-
-The rest of the optimization algorithm remains unchanged, and the optimization process can proceed as usual.
+Except for this adjustment, the rest of the optimization algorithm remains unchanged, and the optimization process can proceed as usual.

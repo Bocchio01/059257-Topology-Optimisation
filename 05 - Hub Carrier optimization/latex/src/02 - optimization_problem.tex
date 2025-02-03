@@ -23,7 +23,7 @@ The hub carrier (shown as one of the components in Figure \ref{fig:hub_carrier})
 \label{subsec:design_domain}
 
 As a first approximation, the design domain is defined as the volume enclosed by the hub carrier's outer surface.
-This choice is made to simplify the problem and to avoid the definition of complex initial geometries.
+This choice is made to avoid the definition of complex initial geometries and not restrict the optimization algorithm to a specific pre-designed shape.
 
 \begin{figure}[H]
     \centering
@@ -32,7 +32,7 @@ This choice is made to simplify the problem and to avoid the definition of compl
     \label{fig:design_domain}
 \end{figure}
 
-In Figure \ref{fig:design_domain}, the design domain is shown in blue, while the non-design domain (i.e., the hub carrier's connecting points with the rest of the vehicle) is shown in red.
+In Figure \ref{fig:design_domain}, the design domain is shown in blue, while the non-design domains (i.e., the hub carrier's connecting points with the rest of the vehicle) are shown in red.
 Connection points are highlighted via the labels $A \dots F$.
 
 The function of each connection point is as follows:
@@ -103,4 +103,4 @@ The formal definition of the topology optimization problem can be given as the m
     \item Manufacturing constraints: constant cross-sections along the $\vec{y}$ direction (i.e., extrusion like shapes).
 \end{itemize}
 
-The optimization variables are the density of each element in the design domain, which can vary between 0 (void) and 1 (solid).
+The optimization variables are the density of each element in the design domain.

@@ -1,4 +1,4 @@
-function x = TO32_distributed(nx, ny, alpha, p, rmin)
+function x = TO31_distributed(nx, ny, alpha, p, rmin)
 
 x(1:ny,1:nx) = alpha;
 change = 1.;
@@ -14,9 +14,10 @@ while change > 0.01
     c = 0.;
     for ely = 1:ny
         for elx = 1:nx
-            n1 = (ny+1)*(elx-1)+ely;
-            n2 = (ny+1)* elx   +ely;
+            dc(ely,elx) = 0.;
             for i = 1:2
+                n1 = (ny+1)*(elx-1)+ely;
+                n2 = (ny+1)* elx   +ely;
                 Ue = U([ ...
                     2*n1-1; ...
                     2*n1; ...
@@ -27,8 +28,8 @@ while change > 0.01
                     2*n1+1; ...
                     2*n1+2 ...
                     ], i);
-                c = c + x(ely,elx)^p*Ue'*KE*Ue;
-                dc(ely,elx) = -p*x(ely,elx)^(p-1)*Ue'*KE*Ue;
+                c = c + x(ely,elx)^p * Ue' * KE * Ue;
+                dc(ely,elx) = dc(ely,elx) -p*x(ely,elx)^(p-1) * Ue' * KE * Ue;
             end
         end
     end
@@ -72,19 +73,19 @@ dcn = zeros(ny, nx);
 
 for x_idx = 1:nx
     for y_idx = 1:ny
-
+        
         sum = 0.0;
-
+        
         for k = max(x_idx-floor(rmin),1):min(x_idx+floor(rmin),nx)
             for l = max(y_idx-floor(rmin),1):min(y_idx+floor(rmin),ny)
-
+        
                 fac = rmin-sqrt((x_idx-k)^2+(y_idx-l)^2);
                 sum = sum + max(0, fac);
                 dcn(y_idx,x_idx) = dcn(y_idx,x_idx) + max(0,fac)*x(l,k)*dc(l,k);
 
             end
         end
-
+        
         dcn(y_idx,x_idx) = dcn(y_idx,x_idx)/(x(y_idx,x_idx)*sum);
 
     end
@@ -99,7 +100,7 @@ function U = compute_U(nx, ny, x, p)
 k_local = compute_k_local();
 
 K = sparse(2*(nx+1)*(ny+1), 2*(nx+1)*(ny+1));
-F = sparse(2*(ny+1)*(nx+1), 1);
+F = sparse(2*(ny+1)*(nx+1), 2);
 U = zeros(2*(ny+1)*(nx+1), 2);
 
 for x_idx = 1:nx
@@ -119,10 +120,8 @@ alldofs   = 1:2*(ny+1)*(nx+1);
 freedofs  = setdiff(alldofs,fixeddofs);
 
 % Solve for displacements
-U(freedofs, 1) = K(freedofs,freedofs) \ F(freedofs, 1);
-U(fixeddofs, 1) = 0;
-U(freedofs, 2) = K(freedofs,freedofs) \ F(freedofs, 2);
-U(fixeddofs, 2) = 0;
+U(freedofs, :) = K(freedofs,freedofs) \ F(freedofs,:);
+U(fixeddofs, :) = 0;
 
 end
 

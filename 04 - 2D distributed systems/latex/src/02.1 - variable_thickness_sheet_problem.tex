@@ -13,13 +13,13 @@ Under these conditions, the problem can be formulated as follows:
     \begin{aligned}
         (P)_{nf} \quad & \begin{cases}
                              \min_{\bm{x}} & C(\bm{x}) = \bm{F}^T \bm{u}         \\
-                             \text{s. t.}  & \sum_{j=1}^{n} V_j - V_{max} \leq 0 \\
+                             \text{s. t.}  & \sum_{e=1}^{n} V_e - V_{max} \leq 0 \\
                                            & \bm{x} \in \Omega
                          \end{cases}                              \\
-                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid 0 < x_j^{min} \le x_j \le 1, \quad j = 1, \dots, n \}
+                       & \Omega := \{ \bm{x} \in \mathbb{R}^n \mid 0 < x_e^{min} \le x_e \le 1, \quad e = 1, \dots, n \}
     \end{aligned}
     \label{eq:compliance_minimization_problem}
 \end{equation}
 
-Where one can notice the definition of the compliance function $C(\bm{x})$ as for the objective function, and the constraint on the volume of the material $V_j$.
-As said before, in order to avoid singularities in the optimization process, the thickness of the sheet is forced to never assume a value of zero, hence the lower bound $0 < x_j^{min}$.
+Where one can notice the definition of the compliance function $C(\bm{x})$ as for the objective function, and the constraint on the volume of the material $V_e$.
+As said before, in order to avoid singularities in the optimization process, the thickness of the sheet is forced to never assume a value of zero, hence the lower bound $0 < x_e^{min}$.

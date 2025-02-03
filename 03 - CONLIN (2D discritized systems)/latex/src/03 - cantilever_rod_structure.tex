@@ -1,12 +1,12 @@
-\section{Topology optimization of a cantilever beams structure}
-\label{sec:cantilever_beam}
+\section{Topology optimization of a cantilever rods structure}
+\label{sec:cantilever_rod_structure}
 
 % See the book on page 101 for results comparison
 
 \subsection{Requests}
 \label{subsec:cb_requests}
 
-The goal of this section is to perform a topology optimization of the truss structure shown in Figure \ref{fig:truss_structure}, minimizing the compliance $C$ by acting on the cross-sectional areas of the beams.
+The goal of this section is to perform a topology optimization of the truss structure shown in Figure \ref{fig:truss_structure}, minimizing the compliance $C$ by acting on the cross-sectional areas of the rods.
 A maximum volume constraint $V_{structure} \le V_0$ is also imposed.
 
 \begin{figure}[H]
@@ -16,11 +16,11 @@ A maximum volume constraint $V_{structure} \le V_0$ is also imposed.
     \label{fig:truss_structure}
 \end{figure}
 
-As can be observed, the structure is composed of $N_{nodes} = 77$ nodes and $N_{beams} = 200$ beams.
+As can be observed, the structure is composed of $N_{nodes} = 77$ nodes and $N_{rods} = 200$ rods.
 Node indexes are indicated in the figure by the numbers reported besides each node, while the black triangles connected to some nodes represent the applied constraints.
 In particular, both vertical and horizontal constrains are imposed on nodes ${47, 44, 21, 25, 57}$.
 
-For the case at hand, we suppose to have a vertical load $F = -6000N$ applied to node $49$ (lower right corner of the structure), and the beam's Young's modulus to be $E = 210 GPa$ (steel).
+For the case at hand, we suppose to have a vertical load $F = -6000N$ applied to node $49$ (lower right corner of the structure), and the rod's Young's modulus to be $E = 210 GPa$ (steel).
 Given these data, we are asked to perform the optimization for the cases reported in Table \ref{tab:cases}.
 
 \begin{table}[H]
@@ -41,7 +41,7 @@ Given these data, we are asked to perform the optimization for the cases reporte
 
 Notice that in Table \ref{tab:cases}, the abbreviations LB and UB stand for Lower Bound and Upper Bound, respectively.
 
-The parameter $\alpha$ is the volume fraction of the structure, defined as $\alpha = \frac{V_0}{V_{max}}$, where $V_{max} = \text{UB} \sum_{j=1}^{N_{beams}} l_j$ is the maximum volume of the structure.
+The parameter $\alpha$ is the volume fraction of the structure, defined as $\alpha = \frac{V_0}{V_{max}}$, where $V_{max} = \text{UB} \sum_{j=1}^{N_{rods}} l_j$ is the maximum volume of the structure.
 
 
 
@@ -69,7 +69,7 @@ Where:
     \end{aligned}
 \end{equation}
 
-Based on these definitions, we can redefine both the optimization problem $(P)_{nf}$ and the Lagrangian function $\mathcal{L}^{k}(\bm{x}, \bm{\lambda})$ as follows:
+Based on these definitions, we can redefine both the optimization problem $(P)_{nf}$ and the Lagrangian function $\mathcal{L}^{k}(\bm{x}, \lambda)$ as follows:
 
 \begin{equation}
     \begin{aligned}
@@ -83,13 +83,13 @@ Based on these definitions, we can redefine both the optimization problem $(P)_{
 \end{equation}
 
 \begin{equation}
-    \mathcal{L}^{k}(\bm{x}, \bm{\lambda}) = r_0^k + \sum_{j \in \Omega_-} (\frac{q_{0j}^k}{x_j} + \lambda_j l_j x_j) - \lambda V_{max}
+    \mathcal{L}^{k}(\bm{x}, \lambda) = r_0^k + \sum_{j \in \Omega_-} \left(\frac{q_{0j}^k}{x_j} + \lambda l_j x_j \right) - \lambda V_{max}
 \end{equation}
 
-Also, the solution of the dual optimization problem $(D)_{nf}$ can be found by solving the following equation:
+Also, the solution of the dual optimization problem $(D)$ can be found by solving the following equation:
 
 \begin{equation}
-    \frac{\partial \mathcal{L}^k}{\partial x_j} = - \frac{q_{0j}^k}{x_j} + \lambda_j l_j = 0 \rightarrow x_j^* = \sqrt{\frac{q_{0j}^k}{\lambda_j l_j}}
+    \frac{\partial \mathcal{L}^k}{\partial x_j} = - \frac{q_{0j}^k}{x_j^2} + \lambda l_j = 0 \rightarrow x_j^* = \sqrt{\frac{q_{0j}^k}{\lambda l_j}}
 \end{equation}
 
 Notice however that the solution given by the equation above may not respect the constraints $x_j^{min} < x_j < x_j^{max}$.
@@ -101,16 +101,18 @@ In this case, we can use the following projection operator to find the optimal s
         x_j^{min} & \text{if } x_j^* < x_j^{min}                \\
         x_j^{max} & \text{if } x_j^* > x_j^{max}
     \end{cases}
+    \label{eq:projection_operator}
 \end{equation}
 
 Finally, we can use the following update rule to find the optimal value of the Lagrangian multiplier $\lambda$:
 
 \begin{equation}
-    \frac{\partial \psi^k(\lambda)}{\partial \lambda} = \sum_{j \in \Omega_-} l_j x_j^{(k+1)} - V_{max} = 0
+    \frac{\partial \phi^k(\lambda)}{\partial \lambda} = \sum_{j \in \Omega_-} l_j x_j^{(k+1)}(\lambda^*) - V_{max} = 0
+    \label{eq:lambda_update}
 \end{equation}
 
-So basically, one can solve for the Lagrangian multiplier $\lambda$ by finding numerically the root of the equation above.
-Once the optimal value of $\lambda$ is found, we can update the design variables $\bm{x}$ using the projection operator defined above, and then update the Lagrangian function $\mathcal{L}^{k}(\bm{x}, \bm{\lambda})$.
+So basically, one can solve for the Lagrangian multiplier $\lambda$ by finding numerically the root of Equation \ref{eq:lambda_update}.
+Once the value of $\lambda^*$ is found, we can update the design variables $\bm{x}(\lambda)$ using the projection operator defined in Equation \ref{eq:projection_operator}.
 This iterative procedure can be repeated until convergence is reached.
 
 One can refer to the MATLAB code provided in the Appendix \ref{lst:core} for the implementation of the solution procedure described above.
@@ -121,6 +123,7 @@ One can refer to the MATLAB code provided in the Appendix \ref{lst:core} for the
 \label{subsec:cb_results}
 
 Based on the solution procedure described in Section \ref{subsec:cb_solution_procedure}, the results of the topology optimization of the truss structure for the cases reported in Table \ref{tab:cases} are shown in Figures \ref{fig:cb_case1}, \ref{fig:cb_case2}, \ref{fig:cb_case3}, and \ref{fig:cb_case4}.
+Red color indicates rods with a positive stress ($\sigma > 0$), while blue color indicates rods with a negative stress ($\sigma < 0$).
 
 \begin{figure}[H]
     \centering
@@ -151,8 +154,8 @@ Based on the solution procedure described in Section \ref{subsec:cb_solution_pro
 \end{figure}
 
 One can clearly notice how the volume fraction $\alpha$ affects the topology of the optimized structure.
-In particular, larger values of $\alpha$ lead to a denser structure, with more beams contributing to the load-bearing capacity of the structure.
-On the other hand, smaller values of $\alpha$ lead to a stiffer structure, with increased compliance values.
+In particular, larger values of $\alpha$ lead to a denser structure, with more rods contributing to the load-bearing capacity of the structure.
+On the other hand, smaller values of $\alpha$ lead to a less stiff structure, with increased compliance values.
 
 Finally, as requested by the project, we report in the following table the cross-sectional areas and the stresses acting in elements $[64, 77, 82]$ for the cases reported in Table \ref{tab:cases}.
 
@@ -188,9 +191,19 @@ Finally, as requested by the project, we report in the following table the cross
 \end{table}
 
 From Table \ref{tab:cb_results}, it can be observed that when the cross-sectional areas of a given element remain within the optimization constraint bounds (i.e., lower bound (LB) and upper bound (UB)), the stresses acting in those elements become equal.
-This phenomenon occurs because the Lagrangian multiplier is directly proportional to the square stress in cases where the element area stays within these specified bounds.
+This phenomenon, which is known as the \text{fully stressed condition}, occurs because the Lagrangian multiplier is directly proportional to the square stress in cases where the design variables stays within the bounds.
 That is:
 
 \begin{equation}
-    \lambda_j = \frac{\sigma_j^2}{E} \rightarrow \sigma_j = \sqrt{E \lambda_j}
+    \lambda = \frac{\sigma_j^2}{E} \rightarrow \sigma_j = \pm \sqrt{E \lambda}
+    \label{eq:fully_stressed_condition}
 \end{equation}
+
+Equation \ref{eq:fully_stressed_condition} can be proved by considering the KKT conditions for the compliance minimization problem of Equation \ref{eq:compliance_minimization_problem} and imposing its Lagrangian function to be stationary with respect to the design variables $\bm{x}$:
+
+\begin{equation}
+    \frac{\partial \mathcal{L}(\bm{x}, \lambda)}{\partial x_j} = \frac{\partial C(\bm{x})}{\partial x_j} - \lambda l_j = 0 \rightarrow -\frac{\sigma_j^2}{E} l_j = \lambda l_j
+\end{equation}
+
+From the equation above, it's easy to recognize the fully stressed condition of Equation \ref{eq:fully_stressed_condition} which holds when the design variables are within the design bounds $x_j^{min} < x_j < x_j^{max}$.
+

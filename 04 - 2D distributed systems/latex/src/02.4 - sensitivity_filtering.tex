@@ -2,22 +2,22 @@
 \label{subsec:sensitivity_filtering}
 
 One of the most severe issues in topology optimization is the checkerboard pattern, which is a common artifact that appears in the optimized designs.
-In order to mitigate this issue, it is common practice to apply a sensitivity filtering technique to the optimization algorithm.
+In order to mitigate this issue, it is common practice to apply a filtering technique.
 
-In particular, a commonly used technique to reduce the risk of checkerboard patterns is the so-called sensitivity filtering, in which the sensitivities are convoluted with a filter kernel.
-In other words, the density of each element is updated based on the average sensitivities of its neighboring elements, rather than the sensitivities of the element itself.
+A commonly used technique to reduce the risk of checkerboard patterns is the so-called sensitivity filtering, in which the sensitivities are convoluted with a filter kernel.
+In other words, the density of each element is updated based on the weighted average sensitivities of its neighboring elements.
 
 Such a filter, can be defined over the compliance sensitivities as:
 
 \begin{equation}
-    \frac{\hat{\partial C}}{\partial x_j} = \frac{1}{x_j \sum_{j} H_{j}} \sum_{j} H_{j} x_j \frac{\partial C}{\partial x_j}
+    \frac{\hat{\partial C}}{\partial x_e} = \frac{1}{x_e \sum_{j} H_{j}} \sum_{j} H_{j} x_j \frac{\partial C}{\partial x_j}
     \label{eq:sensitivity_filtering}
 \end{equation}
 
-Where $H_{j}$ is the filter kernel, and the sum is performed over the neighboring elements of the element $j$.
+Where $H_{j}$ is the filter kernel, and the sum is performed over the neighboring of element $e$.
 The filter kernel $H_{j}$ can be defined in different ways, but a common choice is the following:
 
 \begin{equation}
-    H_{j} = r_{min} - dist(j, i) \quad \{i \in N \mid dist(j, i) \leq r_{min}\}
+    H_{j} = r_{min} - dist(e, j) \quad \{j \in N \mid dist(e, j) \leq r_{min}\}
     \label{eq:filter_kernel}
 \end{equation}

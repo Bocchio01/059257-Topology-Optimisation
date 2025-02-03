@@ -4,7 +4,7 @@
 \subsection{Requests}
 \label{subsec:mf_requests}
 
-The goal of this section is to perform a topology optimization of a motorcycle frame shown in Figure \ref{fig:motorcycle_frame}, minimizing the compliance $C$ by acting on the cross-sectional areas of the beams.
+The goal of this section is to perform a topology optimization of a motorcycle frame shown in Figure \ref{fig:motorcycle_frame}, minimizing the compliance $C$ by acting on the cross-sectional areas of the rods.
 A maximum volume constraint $V_{structure} \le V_0$ is also imposed.
 
 \begin{figure}[H]
@@ -14,7 +14,7 @@ A maximum volume constraint $V_{structure} \le V_0$ is also imposed.
     \label{fig:motorcycle_frame}
 \end{figure}
 
-As can be observed, the structure is composed of $N_{nodes} = 17$ nodes and $N_{beams} = 55$ beams.
+As can be observed, the structure is composed of $N_{nodes} = 17$ nodes and $N_{rods} = 55$ rods.
 Node indexes are indicated in the figure by the numbers reported besides each node, while the black triangles connected to some nodes represent the applied constraints.
 In particular, vertical constrains are imposed on nodes ${9, 17}$, while horizontal constrains are also imposed on node ${17}$.
 
@@ -111,6 +111,7 @@ end
 
 At first, as requested in Section \ref{subsec:mf_requests}, the optimization is run for $w_1 = 0.5$ and $w_2 = 0.5$, with $\alpha = 0.1$, $LB = 0.001 [mm^2]$ and $UB = 700 [mm^2]$.
 The results are shown in Figure \ref{fig:mf_results_1}.
+Red color indicates rods with a positive stress ($\sigma > 0$), while blue color indicates rods with a negative stress ($\sigma < 0$).
 
 \begin{figure}[H]
     \centering

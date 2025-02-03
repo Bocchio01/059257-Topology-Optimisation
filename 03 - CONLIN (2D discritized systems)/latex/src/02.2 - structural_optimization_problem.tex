@@ -7,7 +7,7 @@ Considering a non-singular $K$ matrix, we can define the nested formulation of t
 
 \begin{equation}
     \begin{aligned}
-        (SO)_{sf} \quad & \begin{cases}
+        (SO)_{nf} \quad & \begin{cases}
                               \min_{\bm{x}} & f(\bm{x}, \bm{u}(\bm{x}))                                \\
                               \text{s. t.}  & g_i(\bm{x}, \bm{u}(\bm{x})) \le 0, \quad i = 1, \dots, m \\
                                             & \bm{x} \in \Omega
@@ -24,7 +24,7 @@ Notice that the dependence of the displacement field $\bm{u}(\bm{x})$ on the des
     \label{eq:displacement_field}
 \end{equation}
 
-In both the equations above, the design variables $\bm{x}$ can represent the material properties of the structure, such as the Young's modulus or the density of the material at each element of the structure, or the geometry of the structure, such as the cross-sectional area of the elements or the thickness of the elements.
+In both the equations above, the design variables $\bm{x}$ can represent the material properties of the structure, such as the density of the material at each element of the structure, or the geometry of the structure, such as the cross-sectional area of the elements or the thickness of the elements.
 
 In Equation \ref{eq:structural_optimization_problem}, we still haven't defined the objective function $f(\bm{x}, \bm{u}(\bm{x}))$ and the constraints $g_i(\bm{x}, \bm{u}(\bm{x}))$.
 In the following, we will define two common structural optimization problems: the compliance minimization problem and the volume minimization problem.
@@ -38,7 +38,7 @@ One common type of structural optimization problem, is the minimization of the c
 Compliance is a measure of strain energy stored in a structure, and can be computed from definition as:
 
 \begin{equation}
-    C_j = \frac{1}{2} \int \delta_j \varepsilon_j dV_j = \frac{1}{2} \bm{u}_j^T \bm{K}_j \bm{u}_j
+    C_j = \frac{1}{2} \int \sigma_j \varepsilon_j dV_j = \frac{1}{2} \bm{u}_j^T \bm{k}_j \bm{u}_j
     \label{eq:compliance_definition}
 \end{equation}
 
@@ -86,26 +86,26 @@ Notice that the approximation of the objective function in Equation \ref{eq:conl
     \label{eq:compliance_derivative}
 \end{equation}
 
-Based on Equation \ref{eq:conlin_compliance_minimization_problem}, we can also define the Lagrangian function $\mathcal{L}(\bm{x}, \bm{\lambda})$ as follows:
+Based on Equation \ref{eq:conlin_compliance_minimization_problem}, we can also define the Lagrangian function $\mathcal{L}(\bm{x}, \lambda)$ as follows:
 
 \begin{equation}
-    \mathcal{L}^{k}(\bm{x}, \bm{\lambda}) = f^{(C, k)}(\bm{x}) + \lambda \left( \sum_{j=1}^{n} l_j x_j - V_{max} \right)
+    \mathcal{L}^{k}(\bm{x}, \lambda) = f^{(C, k)}(\bm{x}) + \lambda \left( \sum_{j=1}^{n} l_j x_j - V_{max} \right)
     \label{eq:lagrangian_compliance_minimization}
 \end{equation}
 
-By doing so, we can define the dual optimization problem $(D)_{nf}$ as follows:
+By doing so, we can define the dual optimization problem $(D)$ as follows:
 
 \begin{equation}
     \begin{aligned}
-        (D)_{nf} \quad & \begin{cases}
-                             \max_{\bm{\lambda}} & \min_{\bm{x} \in \Omega} \mathcal{L}(\bm{x}, \bm{\lambda}) \\
-                             \text{s. t.}        & \bm{\lambda} \ge 0
-                         \end{cases}
+        (D) \quad & \begin{cases}
+                        \max_{\lambda} & \min_{\bm{x} \in \Omega} \mathcal{L}(\bm{x}, \lambda) \\
+                        \text{s. t.}   & \lambda \ge 0
+                    \end{cases}
     \end{aligned}
     \label{eq:dual_compliance_minimization_problem}
 \end{equation}
 
-Where, an explicit solution to the dual optimization problem $(D)_{nf}$ can be found by solving the following equation:
+Where, an explicit solution to the dual optimization problem $(D)$ can be found by solving the following equation:
 
 \begin{equation}
     \frac{\partial \mathcal{L}^k}{\partial x_j} = 0
